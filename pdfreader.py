@@ -13,10 +13,14 @@ for page in reader.pages:
 
 text = " ".join(text.split())
 
-#text = text[:2000]
+# split text into chunks of x characters
+def split_text(text, chunk_size=1000):
+    return [text[i:i + chunk_size] for i in range(0, len(text), chunk_size)]
+chunks = split_text(text)
+
+
 
 # send text to ollama
-
 print("\n📄 PDF Chat ready! Type 'exit' to quit.\n")
 while True:
     user_input = input("You: ")
@@ -38,6 +42,7 @@ while True:
     
     response = ollama.chat(model="llama3.2", messages=[{"role": "user", "content": prompt}])
     print()
-    print(f"PDF Reader: {response['message']['content']}\n")
+    answer = response["message"]["content"]
+    print(f"PDF Reader: {answer}\n")
 
 
