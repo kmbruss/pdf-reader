@@ -1,0 +1,5 @@
+numpy
+ollama
+pdfplumber
+sentence-transformers
+textblob
