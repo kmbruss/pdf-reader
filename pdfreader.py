@@ -8,30 +8,14 @@ import ollama
 import pdfplumber
 from sentence_transformers import SentenceTransformer, util
 from textblob import TextBlob
- 
-# -----------------------
-# SPELL CORRECTION
-# -----------------------
+
+embedding_model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+
+PDF_PATH = "essay.pdf"
+
 def correct_query(text):
     return str(TextBlob(text).correct())
 
-# -----------------------
-# LOAD MODEL
-# -----------------------
-embedding_model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-
-# -----------------------
-# LOAD PDF
-# -----------------------
-PDF_PATH = "essay.pdf"
- 
-# def clean_text(text):
-#     words = text.split()
-#     if words and (sum(len(w) for w in words) / len(words)) < 2.5:
-#         text = re.sub(r'(?<=\S) (?=\S)', '', text)
-#     text = re.sub(r'[ \t]+', ' ', text)
-#     text = re.sub(r'\n{3,}', '\n\n', text)
-#     return text.strip()
  
 try:
     pages = []
@@ -39,7 +23,8 @@ try:
         for page in pdf.pages:
             page_text = page.extract_text()
             if page_text:
-                pages.append(page_text)#clean_text(page_text))
+                pages.append(page_text)
+
 except FileNotFoundError:
     print(f"Error: '{PDF_PATH}' not found.")
     sys.exit(1)
@@ -179,10 +164,6 @@ while True:
         relevant_chunks = find_similar_chunks(user_input)
         last_chunks = relevant_chunks  # save for potential follow-up
 
-    # print("\n--- RETRIEVED CHUNKS ---")
-    # for i, c in enumerate(relevant_chunks):
-    #     print(f"\n[Chunk {i+1}]:\n{c}")
-    # print("--- END CHUNKS ---\n")
     context = "\n\n---\n\n".join(relevant_chunks)
 
     # -----------------------
